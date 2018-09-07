@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<script LANGUAGE="JavaScript" SRC="calendar.js">
+</script>
+<style type="text/css" media="screen">@import "../css/basic.css";</style>
+<style type="text/css" media="screen">
+@import "../css/tabs.css";.style1 {font-weight: bold}
+</style>
+
+<!-- #include file ="../include/connect.inc" -->
+<!-- #include file ="../include/locale.inc" -->
+<head>
+	<title>Post Migration Checklist</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+
+	
+	
+	
+</head>
+
+<body>
+
+     <%  
+	   
+	    strUser = request.QueryString(("user")
+	   
+			strSQL = "SELECT * FROM "&strTablePrefix&"store where [Store Number] = '"&strStore&"';"
+			'strSQL = "SELECT * FROM swp_store;"
+			'response.write(" SQL = >"&strSQL&"< <br>")	
+			oRS.Open strSQL
+			
+            if oRS.EOF then
+			   strerrmsg="Store >"&strStore&"< was not found"
+			   response.redirect("runact.asp?act=pod&err="&strerrmsg)
+			end if
+			   
+ 	   
+strIsComplete               = ors("IsComplete")			   
+
+
+strComments = trim(ors("Comments"))
+strComments = replace(strComments,"/ ", "/")
+strComments = replace(strComments,vbCRLF, "")
+strCommentsDisp = ""
+
+dim aComments
+aComments = split(strComments," ",-1)
+intBnd = UBound(aComments)
+'Response.Write("IntBnd=>"&intBnd&"< <BR>")
+for intI = 0 to intBnd
+    'response.write("aComments("&intI&")=>"&aComments(intI)&"<<br>")
+	strMid = aComments(IntI)
+	strX = ""
+	if len(strMid) > 3 and intI > 1 then
+	   intJ = instr(1,strMid,"/")
+	   if intJ > 1  and intJ < len(strMid) then 
+	      strMonth = mid(strMid,1,len(strMid)-intJ-1)
+		  strDay   = mid(strMid,intJ+1,len(strMid)-IntJ)
+		  'response.write("Month=>"&strMonth&"<; Day=>"&strDay&"< <br>")
+	      if isNumeric(strMonth) and isNumeric(strDay) then
+		     strX = vbCRLF
+		  end if
+	   end if	  
+	end if
+	strCommentsDisp = strCommentsDisp & strX & aComments(intI)& " "
+	'response.write("strCommentsDisp=>"&strCommentsDisp&"<<br>")	
+next
+
+strCompleteText=""
+if strIsComplete = 1 then
+   strCompleteText = " Completed "
+end if   
+strStoreDisplay = strStore&strCompleteText
+
+%>
+     <h1>POST Migration Checklist </h1>
+<div class="formouter">	
+<div class="errmsg"><p><%=strErrMsg%></p></div>	
+<h2>Workstation Side</h2>
+<form name="PMC"	 method="post" action="actPMC1.asp"	>	
+<table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="white">
+   <input name="User Name" value="<%=strUseName%>" type="text" />
+   <input name="Date" value="<%=strDate%>" type="text" />
+   <tr>
+    <td width="100%">
+      <table cellpadding="2" cellspacing="2" border="0" width="100%" bgcolor="white">
+        <tr>
+          <td colspan=2 class="style0"> User Name</td>
+          <td width="23%" class="style2"><input name="DeliveryConfirmationDate" value="<%=strDeliveryConfirmationDate%>" type="text" /></td>
+        </tr>  
+        <tr>
+          <td colspan=4 class="style0"> Store Information</td>
+          
+        </tr>
+        
+        <tr>
+          <td width="4%" class="style1">City:</td>
+          <td width="25%" class="style2"><%=strCity%></td>
+          <td width="20%" class="style1">Space Number:</td>
+          <td width="20%" class="style2"><%=strSpaceNumber%></td>
+          <td width="18%" class="style1">Delivery Confirm Date:<a href="javascript:ShowCalendar('document.POD.DeliveryConfirmationDate', document.POD.DeliveryConfirmationDate.value);">
+  <img src="calendar.gif"  border="0" alt="Click Here to Pick a Date"/></a></td>        
+          <td width="23%" class="style2"><input name="DeliveryConfirmationDate" value="<%=strDeliveryConfirmationDate%>" type="text" /></td>
+          
+        </tr>
+        
+              
+      </table>
+    </td>
+   </tr>            
+</table> 
+
+<table cellpadding="2" cellspacing="2" border="0" width="104%"  bgcolor="white" >
+  <tr>
+    <td colspan=2>&nbsp;</td>
+  </tr>  
+  <tr >
+   <td valign="top"  class="style0">Comments</td>
+   <td class="style2"> <textarea name="Comments"  cols="140" rows="6" ><%=strCommentsDisp%></textarea></td>
+  </tr>
+  <tr>
+    <td colspan=2>&nbsp;</td>
+  </tr>  
+</table> 
+<table cellpadding="2" cellspacing="2" border="0" width="100%"  bgcolor="white">
+  <tr>
+   <td>      <input name="reset"   type="reset"/></td>
+   <td align="right"> <input name="submit"  value="Update"  type="submit" /></td>
+  </tr>
+</table> 
+</form>  
+</div>
+</body>
+</html>

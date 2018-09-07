@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- #include file ="../include/connect.inc" -->
+<!-- #include file ="../include/validateSysAdmin.inc" -->
+<!-- #include file ="../include/locale.inc" -->
+<head>
+	<title>List Users</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<style type="text/css" media="screen">@import "../css/basic.css";</style>
+	<style type="text/css" media="screen">@import "../css/tabs.css";</style>
+	<style type="text/css" media="screen">@import "../css/font-awesome.min.css";</style>  
+	<script src="https://use.fontawesome.com/2ad953023c.js"></script> 
+</head>
+
+<body>
+<div id="main">
+   <div id="contents">
+	  <h2>User List</h2>
+	  <a href="Sysadmin.asp">Return to Sysadmin Menu</a><br><br>	
+            <TABLE  Border=0 Cellspacing=2 Cellpadding=2>
+            <tr style="background-color:navy; color:white;" >
+               <td class="dtabh">Username</td>
+               <td class="dtabh">First Name</td>
+               <td class="dtabh">Last Name</td>
+               <td class="dtabh">Last Access</td>
+               <td class="dtabh">Blocked?</td>
+               <td class="dtabh">Active?</td>
+               <td class="dtabh">Admin?</td>
+               <td class="dtabh">SysAdmin</td>
+               <td class="dtabh">Email</td>
+               <td class="dtabh">Create Date</td>
+               <td class="dtabh">End Date</td>
+               <td class="dtabh">Phone</td>
+               <td class="dtabh">Comment</td>
+            </tr>   		
+			<% 
+			'response.write("Session(loggedin)=>"&Session("loggedin")&"< <br>")
+			'response.write("Session(IsAdmin)=>"&Session("IsAdmin")&"< <br>")
+			'response.write("Session(IsSysAdmin)=>"&Session("IsSysAdmin")&"< <br>")
+			
+			
+			strSQL = "Select * FROM dms_user order by username"
+			oRS.Open strSQL
+			bitflip=0
+			intCnt = 0
+			do while not oRS.EOF
+			   intCnt = intCnt + 1
+			   if bitflip = 1 then
+			      strClass = "droweven"
+				  bitflip = 0
+			   else
+			      bitflip = 1
+			      strClass = "drowodd"	  
+			   end if   
+			%>
+			 <tr style="Background-color: <%=strBGColor%>; ">
+			
+			   <td class="<%=strClass%>"><%=(ors("Username"))%></td>
+			   <td class="<%=strClass%>"><%=(ors("userFName"))%></td>			   
+               <td class="<%=strClass%>"><%=(ors("userLName"))%></td>               
+               <td class="<%=strClass%>"><%=(ors("LastAccessDate"))%></td>
+               <td class="<%=strClass%>"><%=(ors("IsBlocked"))%></td>
+               <td class="<%=strClass%>"><%=(ors("IsActive"))%></td>
+               <td class="<%=strClass%>"><%=(ors("IsAdmin"))%></td>
+               <td class="<%=strClass%>"><%=(ors("IsSysAdmin"))%></td>
+               <td class="<%=strClass%>"><%=(ors("Email"))%></td>
+               <td class="<%=strClass%>"><%=(ors("CreateDate"))%></td>
+               <td class="<%=strClass%>"><%=(ors("EndDate"))%></td>
+               <td class="<%=strClass%>"><%=(ors("UserPhone"))%></td>
+               <td class="<%=strClass%>"><%=(ors("Comment"))%></td>
+			 </tr>    
+            <%
+			ors.Movenext
+			loop
+			%>
+            <tr>
+               <td colspan="13" class="dtabh">&nbsp;<%=intCnt%> Users</td>
+            </tr>
+				  </TABLE>
+                  <a href="Sysadmin.asp">Return to SysAdmin</a>
+			<%
+			
+			
+			
+			ors.Close
+		    set ors = Nothing
+			%> 
+		</div>
+        <!--#include file="../include/infooter.inc"-->  
+	</div>
+    <!--#include file="../include/footer.inc"-->
+</body>
+</html>
